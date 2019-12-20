@@ -96,7 +96,7 @@ class Statsd(Logger):
         status = resp.status
         if isinstance(status, str):
             status = int(status.split(None, 1)[0])
-        self.histogram("gunicorn.request.duration", duration_in_ms)
+        self.histogram("gunicorn.request.duration.%d" % status, duration_in_ms)
         self.increment("gunicorn.requests", 1)
         self.increment("gunicorn.request.status.%d" % status, 1)
 
