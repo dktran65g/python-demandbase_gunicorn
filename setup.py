@@ -86,7 +86,7 @@ extras_require = {
 setup(
     name='db_gunicorn',
     #version=__version__,
-    version='20.0.4.db.5',
+    version='20.0.4.db.6',
 
     description='WSGI HTTP Server for UNIX',
     long_description=long_description,

@@ -8,6 +8,7 @@
 import logging
 import socket
 from re import sub
+from re import compile
 
 from gunicorn.glogging import Logger
 
@@ -27,6 +28,7 @@ class Statsd(Logger):
         """
         Logger.__init__(self, cfg)
         self.prefix = sub(r"^(.+[^.]+)\.*$", "\\g<1>.", cfg.statsd_prefix)
+        self.digit_match_reg = compile("\d+")
         try:
             host, port = cfg.statsd_host
             self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -94,7 +96,8 @@ class Statsd(Logger):
         Logger.access(self, resp, req, environ, request_time)
         duration_in_ms = request_time.seconds * 1000 + float(request_time.microseconds) / 10 ** 3
         status = resp.status
-        req_path = environ["PATH_INFO"] #req.uri should also work
+        req_path = environ.get("PATH_INFO", "/") #req.uri should also work
+        req_path = self.digit_match_reg.sub("digit", req_path)
 
         if isinstance(status, str):
             status = int(status.split(None, 1)[0])
